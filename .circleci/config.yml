@@ -1,0 +1,66 @@
+version: 2.1
+
+############################################################
+# Shared Jobs and Configuration
+############################################################
+
+executors:
+  node-executor:
+    docker:
+      - image: 'circleci/node:12-browsers'
+
+commands:
+  attach-workspace-step:
+    steps:
+      - attach_workspace:
+          at: '.'
+  persist-workspace-step:
+    steps:
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - '.'
+
+############################################################
+# Workflow
+############################################################
+
+workflows:
+  version: 2.1
+    pipeline:
+      jobs:
+        - build
+        - static-analysis:
+            requires:
+              - build
+
+############################################################
+# Jobs
+############################################################
+
+jobs:
+
+  build:
+    executor: node-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - 'v1-npm-deps-{{ checksum "package-lock.json" }}'
+            - 'v1-npm-deps-'
+      - run:
+          name: 'Install NPM Dependencies'
+          command: 'npm install'
+      - save_cache:
+          key: 'v1-npm-deps-{{ checksum "package-lock.json" }}'
+          paths:
+            - 'node_modules'
+      - persist-workspace-step
+
+  static-analysis:
+    executor: node-executor
+    steps:
+      - attach-workspace-step
+      - run:
+          name: 'Run Static Analysis'
+          command: 'npm run lint'
