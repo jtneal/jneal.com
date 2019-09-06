@@ -91,3 +91,21 @@ jobs:
           command: 'npm run e2e:once'
       - store_test_results:
           path: './test-results'
+
+  sonar-scanner:
+    docker:
+      - image: 'newtmitch/sonar-scanner:4-alpine'
+        entrypoint: 'bash'
+    steps:
+      - attach-workspace-step
+      - run:
+          name: 'Run & Report Coverage'
+          command: |
+            sonar-scanner \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=$SONAR_TOKEN \
+              -Dsonar.organization=jtneal \
+              -Dsonar.projectKey=jtneal_jneal \
+              -Dsonar.projectName=jneal \
+              -Dsonar.projectVersion=$CIRCLE_SHA1 \
+              -Dsonar.branch.name=$CIRCLE_BRANCH
