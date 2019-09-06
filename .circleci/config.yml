@@ -39,6 +39,9 @@ workflows:
       - e2e-tests:
           requires:
             - build
+      - sonar-scanner:
+          requires:
+            - unit-tests
 
 ############################################################
 # Jobs
@@ -93,14 +96,15 @@ jobs:
           path: './test-results'
 
   sonar-scanner:
+    working_directory: '/usr/src'
     docker:
       - image: 'newtmitch/sonar-scanner:4-alpine'
-        entrypoint: 'bash'
     steps:
       - attach-workspace-step
       - run:
           name: 'Run & Report Coverage'
           command: |
+            sed -i "s+/home/circleci/project+/usr/src+" coverage/jneal/lcov.info
             sonar-scanner \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN \
