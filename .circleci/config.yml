@@ -33,6 +33,12 @@ workflows:
       - static-analysis:
           requires:
             - build
+      - unit-tests:
+          requires:
+            - build
+      - e2e-tests:
+          requires:
+            - build
 
 ############################################################
 # Jobs
@@ -64,3 +70,24 @@ jobs:
       - run:
           name: 'Run Static Analysis'
           command: 'npm run lint'
+
+  unit-tests:
+    executor: node-executor
+    steps:
+      - attach-workspace-step
+      - run:
+          name: 'Run Unit Tests'
+          command: 'npm run test:once'
+      - store_test_results:
+          path: './test-results'
+      - persist-workspace-step
+
+  e2e-tests:
+    executor: node-executor
+    steps:
+      - attach-workspace-step
+      - run:
+          name: 'Run E2E Tests'
+          command: 'npm run e2e:once'
+      - store_test_results:
+          path: './test-results'
