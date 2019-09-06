@@ -27,12 +27,12 @@ commands:
 
 workflows:
   version: 2.1
-    pipeline:
-      jobs:
-        - build
-        - static-analysis:
-            requires:
-              - build
+  pipeline:
+    jobs:
+      - build
+      - static-analysis:
+          requires:
+            - build
 
 ############################################################
 # Jobs
