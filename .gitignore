@@ -3,6 +3,7 @@
 # Terraform
 .terraform
 *.tfstate*
+terraform.plan
 
 # compiled output
 /dist
