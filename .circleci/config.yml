@@ -42,6 +42,13 @@ workflows:
       - sonar-scanner:
           requires:
             - unit-tests
+      - docker_build:
+          requires:
+            - sonar-scanner
+          filters:
+            branches:
+              only:
+                - master
 
 ############################################################
 # Jobs
@@ -53,6 +60,12 @@ jobs:
     executor: node-executor
     steps:
       - checkout
+      - run:
+          name: 'Reset Master Branch'
+          command: |
+            if ["$CIRCLE_BRANCH" != "master"]; then
+              git branch -f master origin/master
+            fi
       - restore_cache:
           keys:
             - 'v1-npm-deps-{{ checksum "package-lock.json" }}'
@@ -113,3 +126,27 @@ jobs:
               -Dsonar.projectName=jneal \
               -Dsonar.projectVersion=$CIRCLE_SHA1 \
               -Dsonar.branch.name=$CIRCLE_BRANCH
+
+  docker_build:
+    docker:
+      - image: 'circleci/python:3.7'
+    steps:
+      - attach-workspace-step
+      - setup_remote_docker
+      - run:
+          name: 'Set Image Tag'
+          command: |
+            tag="release-$(echo $CIRCLE_SHA1 | cut -c1-7)"
+            docker_image="703263122238.dkr.ecr.us-east-2.amazonaws.com/prod-jneal-repo:$tag"
+            echo "export DOCKER_IMAGE=$docker_image" >> $BASH_ENV
+      - run:
+          name: 'Build Docker Image'
+          command: 'docker build -t $DOCKER_IMAGE .'
+      - run:
+          name: 'Install AWS CLI & Authenticate'
+          command: |
+            sudo pip install awscli
+            $(aws ecr get-login --no-include-email --region us-east-2)
+      - run:
+          name: 'Push Docker Image'
+          command: 'docker push $DOCKER_IMAGE'
