@@ -43,12 +43,17 @@ workflows:
           requires:
             - unit-tests
       - docker_build:
+          context: 'prod-jneal-ecr'
           requires:
             - sonar-scanner
           filters:
             branches:
               only:
                 - master
+      - deploy_to_prod:
+          context: 'prod-jneal-ecs'
+          requires:
+            - docker_build
 
 ############################################################
 # Jobs
@@ -150,3 +155,30 @@ jobs:
       - run:
           name: 'Push Docker Image'
           command: 'docker push $DOCKER_IMAGE'
+
+  deploy_to_prod:
+    docker:
+      - image: 'circleci/python:3.7'
+    steps:
+      - run:
+          name: 'Set Image Tag'
+          command: |
+            tag="release-$(echo $CIRCLE_SHA1 | cut -c1-7)"
+            docker_image="703263122238.dkr.ecr.us-east-2.amazonaws.com/prod-jneal-repo:$tag"
+            echo "export DOCKER_IMAGE=$docker_image" >> $BASH_ENV
+      - run:
+          name: 'Install AWS CLI'
+          command: 'sudo pip install awscli'
+      - run:
+          name: 'Create Task Definition'
+          command: 'aws ecs describe-task-definition --task-definition prod-jneal | jq ".taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities) | .containerDefinitions[0].image = env.DOCKER_IMAGE" > task-definition.json'
+      - run:
+          name: 'Debug'
+          command: 'cat task-definition.json'
+          when: always
+      - run:
+          name: 'Deploy Task'
+          command: 'aws ecs register-task-definition --cli-input-json file://task-definition.json'
+      - run:
+          name: 'Deploy Service'
+          command: 'aws ecs update-service --cluster prod-fargate-cluster --service prod-jneal --task-definition prod-jneal'

@@ -9,7 +9,7 @@ provider "aws" {
 
 locals {
   name    = "prod-jneal"
-  version = "ae11659"
+  version = "3782daf"
   vpc     = "vpc-3421f35c"
   subnets = ["subnet-a128f3c9", "subnet-5a958821", "subnet-322b7a7f"]
 }
@@ -427,4 +427,34 @@ resource "aws_appautoscaling_policy" "ecs_policy" {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
   }
+}
+
+############################################################
+# ECS User
+############################################################
+
+# https://www.terraform.io/docs/providers/aws/r/iam_user.html
+resource "aws_iam_user" "ecs_user" {
+  name = "user-${local.name}"
+}
+
+# https://www.terraform.io/docs/providers/aws/r/iam_access_key.html
+resource "aws_iam_access_key" "ecs_key" {
+  user = "${aws_iam_user.ecs_user.name}"
+}
+
+data "template_file" "ecs_user_policy" {
+  template = "${file("${path.module}/ecs_user_policy.json")}"
+
+  vars = {
+    ecs_arn = "${replace(aws_ecs_service.fargate.id, aws_ecs_service.fargate.name, format("%s/%s", aws_ecs_cluster.prod.name, aws_ecs_service.fargate.name))}"
+    task_arn = "${aws_iam_role.ecs_task.arn}"
+  }
+}
+
+# https://www.terraform.io/docs/providers/aws/r/iam_user_policy.html
+resource "aws_iam_user_policy" "ecs_user_policy" {
+  name   = "policy-${aws_iam_user.ecs_user.name}"
+  user   = "${aws_iam_user.ecs_user.name}"
+  policy = "${data.template_file.ecs_user_policy.rendered}"
 }
