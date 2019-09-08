@@ -17,10 +17,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', () => {
+  it('should have logo with alternate text', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Jason Neal');
+    expect(compiled.querySelector('img').getAttribute('alt')).toContain('Jason Neal | Software Engineer | Charlotte, NC');
   });
 });

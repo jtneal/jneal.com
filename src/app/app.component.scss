@@ -2,80 +2,57 @@
   box-shadow: 0 0 0.938em 0.313em #000;
 }
 
-.logo {
-  text-align: center;
-
-  @media (min-width: 576px) {
-    text-align: left;
-  }
-}
-
-.menu-social {
+.social {
   margin: 0 auto;
-  padding-top: 0.9em;
   width: 82px;
 
-  @media (min-width: 576px) {
-    float: right;
-  }
-
-  .icon {
+  li {
     background-image: url('/assets/images/social-icons.png');
-    float: left;
     margin-left: 5px;
 
-    &:first-child {
+    &.social-facebook {
+      background-position: 0 0;
       margin-left: 0;
     }
 
-    &.icon-facebook {
-      background-position: 0 0;
-    }
-
-    &.icon-twitter {
+    &.social-twitter {
       background-position: -24px 0;
     }
 
-    &.icon-linkedin {
+    &.social-linkedin {
       background-position: -48px 0;
     }
 
     a {
-      display: block;
       height: 24px;
-      overflow: hidden;
       text-indent: 100%;
       width: 24px;
     }
   }
 }
 
-.menu-main {
-  padding-top: 0.5em;
-  text-align: center;
+a.active {
+  color: #212529;
+  cursor: text;
+  font-weight: bold;
 
-  li {
-    display: inline-block;
-
-    &:before {
-      content: '\00a0/\00a0';
-      font-size: 1.3rem;
-    }
-
-    &:first-child:before {
-      content: '';
-    }
+  &:hover {
+    text-decoration: none;
   }
+}
 
-  a {
-    &.active {
-      color: #212529;
-      cursor: text;
-      font-weight: bold;
+footer {
+  $bg-color: #000;
+  $dot-color: #111;
+  $dot-size: 2px;
+  $dot-space: 3px;
 
-      &:hover {
-        text-decoration: none;
-      }
-    }
-  }
+  background-color: $bg-color;
+  background-image: linear-gradient(
+    45deg,
+    $dot-color,
+    $dot-color ($dot-space - $dot-size),
+    $bg-color 0
+  );
+  background-size: $dot-space $dot-space;
 }

@@ -11,7 +11,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Jason Neal');
+    expect(page.getTitleText()).toEqual('Software Engineer, Charlotte, NC');
   });
 
   afterEach(async () => {

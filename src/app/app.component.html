@@ -1,45 +1,68 @@
-<div class="container shadow-dark p-3 mb-5 bg-white">
-  <header>
-    <div class="row">
-      <div class="logo col-12 col-sm-8 col-lg-4 order-1">
-        <a routerLink="/">
-          <img alt="Jason Neal | Software Engineer | Charlotte, NC" src="/assets/images/logo-jason-neal-small.png" />
-        </a>
+<div class="bg-white container p-0 shadow-dark">
+  <div class="p-3">
+    <header>
+      <div class="row">
+        <div class="col-sm-8 col-lg-4 text-center text-sm-left">
+          <a routerLink="/">
+            <img alt="Jason Neal | Software Engineer | Charlotte, NC" src="/assets/images/logo-jason-neal-small.png">
+          </a>
+        </div>
+        <div class="col-sm-4 col-lg-2 order-lg-2">
+          <ul class="float-sm-right list-unstyled pt-3 social">
+            <li *ngFor="let link of linksSocial" class="float-left social-{{ link.name | lowercase }}">
+              <a class="d-block overflow-hidden" [href]="link.url" target="_blank" title="Follow me on {{ link.name }}">{{ link.name }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-lg-6 order-lg-1">
+          <ul class="justify-content-center nav pt-3">
+            <ng-container *ngFor="let link of linksMain; index as i">
+              <li *ngIf="i" class="nav-item">/</li>
+              <li class="nav-item">
+                <a *ngIf="!link.external" class="nav-link px-1 py-0" [routerLink]="link.url" routerLinkActive="active">{{ link.name }}</a>
+                <a *ngIf="link.external" class="nav-link px-1 py-0" [href]="link.url">{{ link.name }}</a>
+              </li>
+            </ng-container>
+          </ul>
+        </div>
       </div>
-      <div class="col-12 col-sm-4 col-lg-2 order-2 order-lg-3">
-        <ul class="menu menu-social">
-          <li class="icon icon-facebook">
-            <a href="https://www.facebook.com/jasonneal" target="_blank" title="Follow me on Facebook">Facebook</a>
-          </li>
-          <li class="icon icon-twitter">
-            <a href="https://twitter.com/jasonneal" target="_blank" title="Follow me on Twitter">Twitter</a>
-          </li>
-          <li class="icon icon-linkedin">
-            <a href="https://www.linkedin.com/in/jasontneal" target="_blank" title="Follow me on LinkedIn">LinkedIn</a>
-          </li>
+    </header>
+    <main class="pt-3">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+  <footer class="pt-3 px-3 text-white-50">
+    <div class="row">
+      <div class="col-sm-6 col-lg">
+        <h2 class="h5 text-white">Friends</h2>
+        <ul class="list-unstyled">
+          <li *ngFor="let link of linksFriends"><a [href]="link.url" target="_blank">{{ link.name }}</a></li>
         </ul>
       </div>
-      <div class="col-12 col-lg-6 order-3 order-lg-2">
-        <nav>
-          <ul class="menu menu-main">
-            <li><a routerLink="/" routerLinkActive="active">Home</a></li>
-            <li><a href="/blog">Blog</a></li>
-            <li><a routerLink="/about" routerLinkActive="active">About</a></li>
-            <li><a routerLink="/skills" routerLinkActive="active">Skills</a></li>
-            <li><a routerLink="/portfolio" routerLinkActive="active">Portfolio</a></li>
-            <li><a routerLink="/resume" routerLinkActive="active">Resume</a></li>
-            <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
-          </ul>
-        </nav>
+      <div class="col-sm-6 col-lg">
+        <h2 class="h5 text-white">Favorite Technology</h2>
+        <ul class="list-unstyled">
+          <li *ngFor="let link of linksFavoriteTechnology"><a [href]="link.url" target="_blank">{{ link.name }}</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-6 col-lg">
+        <h2 class="h5 text-white">Recent Work</h2>
+        <ul class="list-unstyled">
+          <li *ngFor="let link of linksRecentWork"><a [href]="link.url" target="_blank">{{ link.name }}</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-6 col-lg">
+        <h2 class="h5 text-white">Contact Information</h2>
+        <p>
+          Jason Neal<br>
+          760 Coralbell Way<br>
+          Tega Cay, SC 29708
+        </p>
+        <p>
+          864.275.2885<br>
+          <a href="mailto:jason@jneal.com">jason@jneal.com</a>
+        </p>
       </div>
     </div>
-  </header>
-  <h1>Jason Neal</h1>
-  <h2>Hello World!</h2>
-  <p>
-    I tend to use my personal websites for learning experiments.
-    This is one such experiment.
-  </p>
-  <router-outlet></router-outlet>
-  <footer></footer>
+  </footer>
 </div>
