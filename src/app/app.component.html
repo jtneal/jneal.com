@@ -1,7 +1,45 @@
-<h1>Jason Neal</h1>
-<h2>Hello World!</h2>
-<p>
-  I tend to use my personal websites for learning experiments.
-  This is one such experiment.
-</p>
-<router-outlet></router-outlet>
+<div class="container shadow-dark p-3 mb-5 bg-white">
+  <header>
+    <div class="row">
+      <div class="logo col-12 col-sm-8 col-lg-4 order-1">
+        <a routerLink="/">
+          <img alt="Jason Neal | Software Engineer | Charlotte, NC" src="/assets/images/logo-jason-neal-small.png" />
+        </a>
+      </div>
+      <div class="col-12 col-sm-4 col-lg-2 order-2 order-lg-3">
+        <ul class="menu menu-social">
+          <li class="icon icon-facebook">
+            <a href="https://www.facebook.com/jasonneal" target="_blank" title="Follow me on Facebook">Facebook</a>
+          </li>
+          <li class="icon icon-twitter">
+            <a href="https://twitter.com/jasonneal" target="_blank" title="Follow me on Twitter">Twitter</a>
+          </li>
+          <li class="icon icon-linkedin">
+            <a href="https://www.linkedin.com/in/jasontneal" target="_blank" title="Follow me on LinkedIn">LinkedIn</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-12 col-lg-6 order-3 order-lg-2">
+        <nav>
+          <ul class="menu menu-main">
+            <li><a routerLink="/" routerLinkActive="active">Home</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a routerLink="/about" routerLinkActive="active">About</a></li>
+            <li><a routerLink="/skills" routerLinkActive="active">Skills</a></li>
+            <li><a routerLink="/portfolio" routerLinkActive="active">Portfolio</a></li>
+            <li><a routerLink="/resume" routerLinkActive="active">Resume</a></li>
+            <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <h1>Jason Neal</h1>
+  <h2>Hello World!</h2>
+  <p>
+    I tend to use my personal websites for learning experiments.
+    This is one such experiment.
+  </p>
+  <router-outlet></router-outlet>
+  <footer></footer>
+</div>
