@@ -1,7 +1,3 @@
-# Terraform module which creates ECR resources on AWS.
-#
-# https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html
-
 provider "aws" {
   profile = "default"
   region  = "us-east-2"
@@ -23,6 +19,7 @@ resource "aws_ecr_repository" "primary_repo" {
   name = "${local.name}-repo"
 }
 
+# https://www.terraform.io/docs/providers/template/d/file.html
 data "template_file" "ecr_lifecycle_policy" {
   template = "${file("${path.module}/ecr_lifecycle_policy.json")}"
 }
@@ -47,6 +44,7 @@ resource "aws_iam_access_key" "ecr_key" {
   user = "${aws_iam_user.ecr_user.name}"
 }
 
+# https://www.terraform.io/docs/providers/template/d/file.html
 data "template_file" "ecr_user_policy" {
   template = "${file("${path.module}/ecr_user_policy.json")}"
 
@@ -72,23 +70,16 @@ resource "aws_iam_user_policy" "ecr_user_policy" {
 # VPC
 ############################################################
 
+# https://www.terraform.io/docs/providers/aws/d/vpc.html
 data "aws_vpc" "selected" {
   id = "${local.vpc}"
 }
-
-# https://www.terraform.io/docs/providers/aws/r/vpc.html
-# resource "aws_vpc" "main" {
-#   cidr_block = "10.0.0.0/16"
-
-#   tags = {
-#     Name = "vpc-jneal"
-#   }
-# }
 
 ############################################################
 # ECS Role
 ############################################################
 
+# https://www.terraform.io/docs/providers/template/d/file.html
 data "template_file" "ecs_task_policy" {
   template = "${file("${path.module}/ecs_task_policy.json")}"
 }
@@ -107,6 +98,7 @@ resource "aws_iam_role" "ecs_task_execution" {
   path               = "/ECS/"
 }
 
+# https://www.terraform.io/docs/providers/template/d/file.html
 data "template_file" "ecs_task_execution_policy" {
   template = "${file("${path.module}/ecs_task_execution_policy.json")}"
 
@@ -215,6 +207,7 @@ resource "aws_lb_listener" "https" {
 # Fargate Task
 ############################################################
 
+# https://www.terraform.io/docs/providers/template/d/file.html
 data "template_file" "ecs_task_definition" {
   template = "${file("${path.module}/ecs_task_definition.json")}"
 
@@ -443,6 +436,7 @@ resource "aws_iam_access_key" "ecs_key" {
   user = "${aws_iam_user.ecs_user.name}"
 }
 
+# https://www.terraform.io/docs/providers/template/d/file.html
 data "template_file" "ecs_user_policy" {
   template = "${file("${path.module}/ecs_user_policy.json")}"
 

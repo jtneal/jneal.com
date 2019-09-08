@@ -173,10 +173,6 @@ jobs:
           name: 'Create Task Definition'
           command: 'aws ecs describe-task-definition --task-definition prod-jneal | jq ".taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities) | .containerDefinitions[0].image = env.DOCKER_IMAGE" > task-definition.json'
       - run:
-          name: 'Debug'
-          command: 'cat task-definition.json'
-          when: always
-      - run:
           name: 'Deploy Task'
           command: 'aws ecs register-task-definition --cli-input-json file://task-definition.json'
       - run:
