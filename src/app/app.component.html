@@ -33,24 +33,9 @@
   </div>
   <footer class="pt-3 px-3 text-white-50">
     <div class="row">
-      <div class="col-sm-6 col-lg">
-        <h2 class="h5 text-white">Friends</h2>
-        <ul class="list-unstyled">
-          <li *ngFor="let link of linksFriends"><a [href]="link.url" target="_blank">{{ link.name }}</a></li>
-        </ul>
-      </div>
-      <div class="col-sm-6 col-lg">
-        <h2 class="h5 text-white">Favorite Technology</h2>
-        <ul class="list-unstyled">
-          <li *ngFor="let link of linksFavoriteTechnology"><a [href]="link.url" target="_blank">{{ link.name }}</a></li>
-        </ul>
-      </div>
-      <div class="col-sm-6 col-lg">
-        <h2 class="h5 text-white">Recent Work</h2>
-        <ul class="list-unstyled">
-          <li *ngFor="let link of linksRecentWork"><a [href]="link.url" target="_blank">{{ link.name }}</a></li>
-        </ul>
-      </div>
+      <app-footer-menu class="col-sm-6 col-lg" [links]="linksFriends" name="Friends"></app-footer-menu>
+      <app-footer-menu class="col-sm-6 col-lg" [links]="linksFavoriteTechnology" name="Favorite Technology"></app-footer-menu>
+      <app-footer-menu class="col-sm-6 col-lg" [links]="linksRecentWork" name="Recent Work"></app-footer-menu>
       <div class="col-sm-6 col-lg">
         <h2 class="h5 text-white">Contact Information</h2>
         <p>
