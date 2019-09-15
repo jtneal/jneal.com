@@ -1,0 +1,30 @@
+<div *ngIf="portfolio$ | async as portfolio">
+  <section class="featured-content pb-3 px-3">
+    <img [alt]="portfolio.title" class="border w-100" src="/assets/images/portfolio/{{ portfolio.image }}">
+  </section>
+  <section class="p-3">
+    <div class="row">
+      <div class="col-12 col-sm-6 col-lg-8">
+        <h1 class="h4 mb-3">Portfolio: {{ portfolio.title }}</h1>
+        <p>{{ portfolio.description }}</p>
+        <h2 class="h5">Company Information:</h2>
+        <p>{{ portfolio.company }}</p>
+        <button class="btn btn-primary" (click)="goBack()">&laquo; Go Back</button>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="bg-custom border float-right ml-3 p-3 w-100">
+          <h2 class="h5 mb-0">Location:</h2>
+          <p>{{ portfolio.location }}</p>
+          <h2 class="h5 mb-0">Web Address:</h2>
+          <p><a [href]="portfolio.url" target="_blank">{{ portfolio.url }}</a></p>
+          <h2 class="h5 mb-0">Project Completion:</h2>
+          <p>{{ portfolio.date | date: 'LLLL yyyy' }}</p>
+          <h2 class="h5 mb-0">Skills Used:</h2>
+          <ul class="mb-0">
+            <li *ngFor="let skill of portfolio.skills">{{ skill }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

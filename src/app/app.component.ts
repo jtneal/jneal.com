@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+
+import { IPortfolio } from './portfolio/portfolio';
+import { PortfolioService } from './portfolio/portfolio.service';
 
 @Component({
   selector: 'app-root',
   styleUrls: ['./app.component.scss'],
   templateUrl: './app.component.html',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public linksSocial = [{
     name: 'Facebook',
     url: 'https://www.facebook.com/jasonneal',
@@ -22,7 +26,7 @@ export class AppComponent {
   }, {
     external: true,
     name: 'Blog',
-    url: '/blog',
+    url: 'https://blog.jneal.org/',
   }, {
     name: 'About',
     url: '/about',
@@ -35,9 +39,6 @@ export class AppComponent {
   }, {
     name: 'Resume',
     url: '/resume',
-  }, {
-    name: 'Contact',
-    url: '/contact',
   }];
   public linksFriends = [{
     name: 'Quicken Loans',
@@ -77,23 +78,12 @@ export class AppComponent {
     name: 'Nginx',
     url: 'https://nginx.org/',
   }];
-  public linksRecentWork = [{
-    name: 'Inside Chick-fil-A',
-    url: '/portfolio/75/inside-chick-fil-a',
-  }, {
-    name: 'Advance America',
-    url: '/portfolio/74/advance-america',
-  }, {
-    name: 'National Cash Advance',
-    url: '/portfolio/73/national-cash-advance',
-  }, {
-    name: 'Purpose Financial Services',
-    url: '/portfolio/72/purpose-financial-services',
-  }, {
-    name: 'Denny\'s Denny\'s',
-    url: '/portfolio/71/dennys-dennys',
-  }, {
-    name: 'Evolve USA',
-    url: '/portfolio/70/evolve-usa',
-  }];
+
+  public portfolios$: Observable<IPortfolio[]>;
+
+  constructor(private portfolios: PortfolioService) {}
+
+  public ngOnInit() {
+    this.portfolios$ = this.portfolios.getLatest();
+  }
 }

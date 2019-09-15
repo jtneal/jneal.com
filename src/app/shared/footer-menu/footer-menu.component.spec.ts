@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FooterMenuComponent } from './footer-menu.component';
@@ -9,6 +10,7 @@ describe('FooterMenuComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [FooterMenuComponent],
+      schemas: [NO_ERRORS_SCHEMA],
     })
     .compileComponents();
   }));
