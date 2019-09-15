@@ -5,7 +5,7 @@ provider "aws" {
 
 locals {
   name    = "prod-jneal"
-  version = "3782daf"
+  version = "e6a6eed"
   vpc     = "vpc-3421f35c"
   subnets = ["subnet-a128f3c9", "subnet-5a958821", "subnet-322b7a7f"]
 }
@@ -246,13 +246,100 @@ resource "aws_cloudwatch_log_group" "default" {
 }
 
 # https://www.terraform.io/docs/providers/aws/d/route53_zone.html
-data "aws_route53_zone" "selected" {
+data "aws_route53_zone" "jnealcom" {
+  name = "jneal.com."
+}
+
+# https://www.terraform.io/docs/providers/aws/d/route53_zone.html
+data "aws_route53_zone" "jnealnet" {
+  name = "jneal.net."
+}
+
+# https://www.terraform.io/docs/providers/aws/d/route53_zone.html
+data "aws_route53_zone" "jnealorg" {
   name = "jneal.org."
 }
 
 # https://www.terraform.io/docs/providers/aws/r/route53_record.html
-resource "aws_route53_record" "apex" {
-  zone_id = "${data.aws_route53_zone.selected.zone_id}"
+resource "aws_route53_record" "jnealcom_apex" {
+  zone_id = "${data.aws_route53_zone.jnealcom.zone_id}"
+  name    = "jneal.com"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.alb.dns_name}"
+    zone_id                = "${aws_lb.alb.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealcom_www" {
+  zone_id = "${data.aws_route53_zone.jnealcom.zone_id}"
+  name    = "www.jneal.com"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["jneal.com."]
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealcom_blog" {
+  zone_id = "${data.aws_route53_zone.jnealcom.zone_id}"
+  name    = "blog.jneal.com"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["jnealcom.wordpress.com."]
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealcom_mx" {
+  zone_id = "${data.aws_route53_zone.jnealcom.zone_id}"
+  name    = "jneal.com"
+  type    = "MX"
+  ttl     = "300"
+  records = [
+    "1 aspmx.l.google.com.",
+    "5 alt1.aspmx.l.google.com.",
+    "5 alt2.aspmx.l.google.com.",
+    "10 aspmx2.googlemail.com.",
+    "10 aspmx3.googlemail.com."
+  ]
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealnet_apex" {
+  zone_id = "${data.aws_route53_zone.jnealnet.zone_id}"
+  name    = "jneal.net"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.alb.dns_name}"
+    zone_id                = "${aws_lb.alb.zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealnet_www" {
+  zone_id = "${data.aws_route53_zone.jnealnet.zone_id}"
+  name    = "www.jneal.net"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["jneal.net."]
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealnet_blog" {
+  zone_id = "${data.aws_route53_zone.jnealnet.zone_id}"
+  name    = "blog.jneal.net"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["jnealcom.wordpress.com."]
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealorg_apex" {
+  zone_id = "${data.aws_route53_zone.jnealorg.zone_id}"
   name    = "jneal.org"
   type    = "A"
 
@@ -264,12 +351,21 @@ resource "aws_route53_record" "apex" {
 }
 
 # https://www.terraform.io/docs/providers/aws/r/route53_record.html
-resource "aws_route53_record" "www" {
-  zone_id = "${data.aws_route53_zone.selected.zone_id}"
+resource "aws_route53_record" "jnealorg_www" {
+  zone_id = "${data.aws_route53_zone.jnealorg.zone_id}"
   name    = "www.jneal.org"
   type    = "CNAME"
-  ttl     = "60"
-  records = ["jneal.org"]
+  ttl     = "300"
+  records = ["jneal.org."]
+}
+
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+resource "aws_route53_record" "jnealorg_blog" {
+  zone_id = "${data.aws_route53_zone.jnealorg.zone_id}"
+  name    = "blog.jneal.org"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["jnealcom.wordpress.com."]
 }
 
 # https://www.terraform.io/docs/providers/aws/r/security_group.html
@@ -342,7 +438,7 @@ resource "aws_lb_listener_rule" "listener_to_container" {
 
   condition {
     field  = "host-header"
-    values = ["${aws_route53_record.apex.fqdn}"]
+    values = ["${aws_route53_record.jnealcom_apex.fqdn}"]
   }
 }
 
@@ -354,14 +450,90 @@ resource "aws_lb_listener_rule" "www_redirect" {
     type = "redirect"
 
     redirect {
-      host        = "${aws_route53_record.apex.fqdn}"
+      host        = "${aws_route53_record.jnealcom_apex.fqdn}"
       status_code = "HTTP_301"
     }
   }
 
   condition {
     field  = "host-header"
-    values = ["${aws_route53_record.www.fqdn}"]
+    values = ["${aws_route53_record.jnealcom_www.fqdn}"]
+  }
+}
+
+# https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html
+resource "aws_lb_listener_rule" "jnealnet_redirect" {
+  listener_arn = "${aws_lb_listener.https.arn}"
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "${aws_route53_record.jnealcom_apex.fqdn}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["${aws_route53_record.jnealnet_apex.fqdn}"]
+  }
+}
+
+# https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html
+resource "aws_lb_listener_rule" "jnealnet_www_redirect" {
+  listener_arn = "${aws_lb_listener.https.arn}"
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "${aws_route53_record.jnealcom_apex.fqdn}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["${aws_route53_record.jnealnet_www.fqdn}"]
+  }
+}
+
+# https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html
+resource "aws_lb_listener_rule" "jnealorg_redirect" {
+  listener_arn = "${aws_lb_listener.https.arn}"
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "${aws_route53_record.jnealcom_apex.fqdn}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["${aws_route53_record.jnealorg_apex.fqdn}"]
+  }
+}
+
+# https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html
+resource "aws_lb_listener_rule" "jnealorg_www_redirect" {
+  listener_arn = "${aws_lb_listener.https.arn}"
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "${aws_route53_record.jnealcom_apex.fqdn}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    field  = "host-header"
+    values = ["${aws_route53_record.jnealorg_www.fqdn}"]
   }
 }
 
