@@ -1,1 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+body {
+  $bg-color: #111;
+  $stripe-color: #000;
+  $stripe-size: .85em;
+
+  background-attachment: fixed;
+  background-color: $bg-color;
+  background-image: repeating-linear-gradient(
+    135deg,
+    $bg-color,
+    $bg-color $stripe-size,
+    $stripe-color 0,
+    $stripe-color ($stripe-size * 2)
+  );
+}
+
+img {
+  padding: 1px;
+}
+
+.featured-content {
+  background-image: linear-gradient(#fff, #eee);
+}
