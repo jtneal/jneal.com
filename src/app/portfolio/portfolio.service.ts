@@ -847,7 +847,7 @@ export class PortfolioService {
       // Client Portal
       // One More???
     ]).pipe(
-      map((portfolios) => portfolios.sort((a, b) => b.id - a.id)),
+      map((portfolios) => [...portfolios].sort((a, b) => b.id - a.id)),
     );
   }
 
