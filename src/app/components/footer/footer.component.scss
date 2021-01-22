@@ -1,0 +1,36 @@
+@import '../../../vars.scss';
+
+footer {
+  background-color: #eee;
+  font-family: Montserrat;
+}
+
+.footer {
+  @media (min-width: $breakpoint) {
+    display: flex;
+  }
+}
+
+section {
+  @media (min-width: $breakpoint) {
+    box-sizing: border-box;
+    flex: 0 0 25%;
+    padding-right: 16px;
+
+    &.contact {
+      padding-right: 0;
+    }
+  }
+}
+
+h3 {
+  margin-top: 16px;
+
+  @media (min-width: $breakpoint) {
+    margin-top: 0;
+  }
+}
+
+.friends h3 {
+  margin-top: 0;
+}

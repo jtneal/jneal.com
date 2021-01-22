@@ -1,0 +1,41 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "grant-deployment-user-access",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "${deploy_user_arn}"
+      },
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:PutObject*",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "${bucket_arn}",
+        "${bucket_arn}/*"
+      ]
+    },
+    {
+      "Sid": "grant-cloudfront-identity-access-1",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "${cloudfront_principal_arn}"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "${bucket_arn}/*"
+    },
+    {
+      "Sid": "grant-cloudfront-identity-access-2",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "${cloudfront_principal_arn}"
+      },
+      "Action": "s3:ListBucket",
+      "Resource": "${bucket_arn}"
+    }
+  ]
+}

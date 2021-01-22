@@ -1,11 +1,7 @@
-import { browser, by, element } from 'protractor';
+import { AppPage } from '../app.po';
 
-export class AboutPage {
-  public navigateTo() {
-    return browser.get(`${browser.baseUrl}about`) as Promise<any>;
-  }
-
-  public getHeadlineText(index: number) {
-    return element.all(by.css('app-about h1')).get(index).getText() as Promise<string>;
+export class AboutPage extends AppPage {
+  public async navigateTo(): Promise<unknown> {
+    return super.navigateTo();
   }
 }

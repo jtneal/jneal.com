@@ -1,0 +1,15 @@
+<section>
+  <h1>Awards</h1>
+  <div *ngFor="let award of awards$ | async" class="card">
+    <div class="card-header">
+      <h2>{{ award.type }}</h2>
+    </div>
+    <div class="card-subtitle">
+      <h4>{{ award.title }}</h4>
+      {{ award.date }}
+    </div>
+    <ul>
+      <li *ngFor="let description of award.descriptions">{{ description }}</li>
+    </ul>
+  </div>
+</section>

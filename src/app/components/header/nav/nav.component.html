@@ -1,0 +1,14 @@
+<nav>
+  <a class="mobile-menu" (click)="showMenu = !showMenu" [routerLink]=""><img alt="Menu Icon" src="/assets/images/menu-icon.png"></a>
+  <ul [class.show-menu]="showMenu">
+    <li><a (click)="showMenu = false" [routerLink]="['/']" routerLinkActive="current" [routerLinkActiveOptions]="{ exact: true }">About</a></li>
+    <li><a (click)="showMenu = false" [routerLink]="['/experience']" routerLinkActive="current">Experience</a></li>
+    <li><a (click)="showMenu = false" [routerLink]="['/projects']" routerLinkActive="current">Projects</a></li>
+    <li><a (click)="showMenu = false" [routerLink]="['/skills']" routerLinkActive="current">Skills</a></li>
+    <li><a (click)="showMenu = false" [routerLink]="['/awards']" routerLinkActive="current">Awards</a></li>
+    <li><a href="https://blog.jneal.com/" rel="noopener noreferrer" target="_blank">Blog</a></li>
+    <li><a href="/assets/files/resume-jason-neal.pdf" target="_blank">Resume</a></li>
+  </ul>
+  <a *ngIf="showMenu" class="close-button" (click)="showMenu = false" [routerLink]="">&#10005;</a>
+</nav>
+<div *ngIf="showMenu" class="nav-mask" (click)="showMenu = false"></div>

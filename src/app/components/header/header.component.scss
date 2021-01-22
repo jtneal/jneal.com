@@ -1,0 +1,49 @@
+@import '../../../vars.scss';
+
+header {
+  background-color: #fff;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.masthead {
+  display: flex;
+  padding: 10px;
+}
+
+.logo {
+  border-right: solid 1px #ccc;
+  flex: 0 1 auto;
+  margin-right: 4px;
+  padding: 6px 10px 6px 0;
+
+  @media (min-width: $breakpoint) {
+    margin-right: 10px;
+    padding: 6px 16px 6px 6px;
+  }
+}
+
+.social {
+  flex: 0 1 auto;
+  height: 30px;
+  overflow: hidden;
+  padding: 9px 0 9px 6px;
+
+  img {
+    display: inline-block;
+    margin-right: 5px;
+
+    @media (min-width: $breakpoint) {
+      margin-right: 16px;
+    }
+  }
+}
+
+.navigation {
+  flex: 1 1 auto;
+  height: 48px;
+}

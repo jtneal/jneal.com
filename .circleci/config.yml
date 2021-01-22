@@ -7,19 +7,20 @@ version: 2.1
 executors:
   node-executor:
     docker:
-      - image: 'circleci/node:12-browsers'
+      - image: 'circleci/node:14-browsers'
+    working_directory: ~/app
 
 commands:
   attach-workspace-step:
     steps:
       - attach_workspace:
-          at: '.'
+          at: ~/
   persist-workspace-step:
     steps:
       - persist_to_workspace:
-          root: '.'
+          root: ~/
           paths:
-            - '.'
+            - app
 
 ############################################################
 # Workflow
@@ -30,30 +31,29 @@ workflows:
   pipeline:
     jobs:
       - build
-      - static-analysis:
+      - lint:
           requires:
             - build
-      - unit-tests:
+      - unit-test:
           requires:
             - build
-      - e2e-tests:
+      - e2e-test:
           requires:
             - build
       - sonar-scanner:
           requires:
-            - unit-tests
-      - docker_build:
-          context: 'prod-jneal-ecr'
+            - unit-test
+      - deploy-prod:
+          context: 'prod-jneal-ecs'
           requires:
             - sonar-scanner
           filters:
             branches:
               only:
-                - master
-      - deploy_to_prod:
-          context: 'prod-jneal-ecs'
+                - main
+      - prod-e2e-test:
           requires:
-            - docker_build
+            - deploy-prod
 
 ############################################################
 # Jobs
@@ -66,50 +66,58 @@ jobs:
     steps:
       - checkout
       - run:
-          name: 'Reset Master Branch'
+          name: 'Reset Main Branch'
           command: |
-            if ["$CIRCLE_BRANCH" != "master"]; then
-              git branch -f master origin/master
+            if ["$CIRCLE_BRANCH" != "main"]; then
+              git branch -f main origin/main
             fi
       - restore_cache:
           keys:
-            - 'v1-npm-deps-{{ checksum "package-lock.json" }}'
-            - 'v1-npm-deps-'
+            - 'node-dependencies-{{ checksum "package-lock.json" }}'
+            - 'node-dependencies-'
       - run:
-          name: 'Install NPM Dependencies'
+          environment:
+            NG_CLI_ANALYTICS: ci
+          name: 'Restore packages'
           command: 'npm install'
+      - run:
+          name: Disable Analytics
+          command: npx ng analytics off
+      - run:
+          name: Precompile Angular libraries
+          command: npx ngcc
       - save_cache:
-          key: 'v1-npm-deps-{{ checksum "package-lock.json" }}'
+          key: 'node-dependencies-{{ checksum "package-lock.json" }}'
           paths:
             - 'node_modules'
       - persist-workspace-step
 
-  static-analysis:
+  lint:
     executor: node-executor
     steps:
       - attach-workspace-step
       - run:
-          name: 'Run Static Analysis'
+          name: 'Lint code'
           command: 'npm run lint'
 
-  unit-tests:
+  unit-test:
     executor: node-executor
     steps:
       - attach-workspace-step
       - run:
-          name: 'Run Unit Tests'
-          command: 'npm run test:once'
+          name: 'Run unit tests'
+          command: 'npm run test:cov'
       - store_test_results:
           path: './test-results'
       - persist-workspace-step
 
-  e2e-tests:
+  e2e-test:
     executor: node-executor
     steps:
       - attach-workspace-step
       - run:
-          name: 'Run E2E Tests'
-          command: 'npm run e2e:once'
+          name: 'Run e2e tests'
+          command: 'npm run e2e:ci'
       - store_test_results:
           path: './test-results'
 
@@ -119,10 +127,14 @@ jobs:
       - image: 'newtmitch/sonar-scanner:4-alpine'
     steps:
       - attach-workspace-step
+      - restore_cache:
+          key: sonar-plugins
       - run:
-          name: 'Run & Report Coverage'
+          name: 'Replace coverage paths'
+          command: sed -i "s+/home/circleci+/usr/src+" coverage/jneal/lcov.info
+      - run:
+          name: 'Run sonar scanner'
           command: |
-            sed -i "s+/home/circleci/project+/usr/src+" coverage/jneal/lcov.info
             sonar-scanner \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN \
@@ -131,50 +143,31 @@ jobs:
               -Dsonar.projectName=jneal \
               -Dsonar.projectVersion=$CIRCLE_SHA1 \
               -Dsonar.branch.name=$CIRCLE_BRANCH
+      - run:
+          save_cache:
+            paths:
+              - ~/.sonar/cache
+            key: sonar-plugins-{{ epoch }}
 
-  docker_build:
+  deploy-prod:
     docker:
-      - image: 'circleci/python:3.7'
+      - image: 'amazon/aws-cli'
+    working_directory: ~/app
     steps:
       - attach-workspace-step
-      - setup_remote_docker
       - run:
-          name: 'Set Image Tag'
-          command: |
-            tag="release-$(echo $CIRCLE_SHA1 | cut -c1-7)"
-            docker_image="703263122238.dkr.ecr.us-east-2.amazonaws.com/prod-jneal-repo:$tag"
-            echo "export DOCKER_IMAGE=$docker_image" >> $BASH_ENV
+          name: 'Deploy to prod'
+          command: aws s3 sync dist/jneal s3://jneal.com/ --delete --cache-control "no-cache"
       - run:
-          name: 'Build Docker Image'
-          command: 'docker build -t $DOCKER_IMAGE .'
-      - run:
-          name: 'Install AWS CLI & Authenticate'
-          command: |
-            sudo pip install awscli
-            $(aws ecr get-login --no-include-email --region us-east-2)
-      - run:
-          name: 'Push Docker Image'
-          command: 'docker push $DOCKER_IMAGE'
+          name: 'Invalidate cache'
+          command: aws cloudfront create-invalidation --distribution-id EEBT46KKHGG --paths "/*"
 
-  deploy_to_prod:
-    docker:
-      - image: 'circleci/python:3.7'
+  prod-e2e-test:
+    executor: node-executor
     steps:
+      - attach-workspace-step
       - run:
-          name: 'Set Image Tag'
-          command: |
-            tag="release-$(echo $CIRCLE_SHA1 | cut -c1-7)"
-            docker_image="703263122238.dkr.ecr.us-east-2.amazonaws.com/prod-jneal-repo:$tag"
-            echo "export DOCKER_IMAGE=$docker_image" >> $BASH_ENV
-      - run:
-          name: 'Install AWS CLI'
-          command: 'sudo pip install awscli'
-      - run:
-          name: 'Create Task Definition'
-          command: 'aws ecs describe-task-definition --task-definition prod-jneal | jq ".taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities) | .containerDefinitions[0].image = env.DOCKER_IMAGE" > task-definition.json'
-      - run:
-          name: 'Deploy Task'
-          command: 'aws ecs register-task-definition --cli-input-json file://task-definition.json'
-      - run:
-          name: 'Deploy Service'
-          command: 'aws ecs update-service --cluster prod-fargate-cluster --service prod-jneal --task-definition prod-jneal'
+          name: 'Run e2e tests'
+          command: 'npm run e2e:ci:prod'
+      - store_test_results:
+          path: './test-results'

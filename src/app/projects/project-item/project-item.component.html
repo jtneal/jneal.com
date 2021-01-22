@@ -1,0 +1,25 @@
+<section *ngIf="project$ | async as project">
+  <h1>{{ project.title }}</h1>
+  <div class="card">
+    <img [alt]="project.title" src="/assets/images/projects/{{ project.image }}">
+    <div class="card-content">
+      <div class="content-main">
+        <p>{{ project.description }}</p>
+        <h4>Company Information:</h4>
+        <p class="final">{{ project.company }}</p>
+      </div>
+      <div class="content-side">
+        <h4>Location:</h4>
+        <p>{{ project.location }}</p>
+        <h4>Web Address:</h4>
+        <p><a [href]="project.url" rel="noopener noreferrer" target="_blank">{{ project.url }}</a></p>
+        <h4>Project Completion:</h4>
+        <p>{{ project.date | date: 'LLLL yyyy' }}</p>
+        <h4>Skills Used:</h4>
+        <ul>
+          <li *ngFor="let skill of project.skills">{{ skill }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

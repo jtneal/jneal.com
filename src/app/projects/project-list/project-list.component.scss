@@ -1,0 +1,24 @@
+@import '../../../vars.scss';
+
+.card-column {
+  padding-bottom: 16px;
+
+  @media (min-width: $breakpoint) {
+    &:nth-last-child(-n+1) {
+      padding-bottom: 0;
+    }
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.card-subtitle {
+  @media (min-width: $breakpoint) {
+    position: initial;
+    right: initial;
+    text-align: initial;
+    top: initial;
+  }
+}

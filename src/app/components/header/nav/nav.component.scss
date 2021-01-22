@@ -1,0 +1,119 @@
+@import '../../../../vars.scss';
+
+nav {
+  font-family: Montserrat;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.mobile-menu {
+  display: inline-block;
+  padding: 8px 0;
+
+  @media (min-width: $breakpoint) {
+    display: none;
+    padding: 8px 6px;
+  }
+}
+
+ul {
+  background-color: #fff;
+  height: 100vh;
+  padding-top: 16px;
+  position: fixed;
+  right: -250px;
+  top: 0;
+  transition: all 0.5s ease-in-out;
+  width: 250px;
+  z-index: 2;
+
+  @media (min-width: $breakpoint) {
+    background-color: initial;
+    height: initial;
+    padding-top: initial;
+    position: initial;
+    right: initial;
+    top: initial;
+    transition: initial;
+    width: initial;
+    z-index: initial;
+  }
+
+  &.show-menu {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    right: 0;
+
+    @media (min-width: $breakpoint) {
+      box-shadow: initial;
+      -webkit-box-shadow: initial;
+      right: initial;
+    }
+  }
+}
+
+li {
+  display: table;
+  line-height: 1rem;
+  margin: 0 auto;
+
+  @media (min-width: $breakpoint) {
+    display: inline-block;
+    margin: 0;
+  }
+
+  a {
+    border-bottom: solid 3px #fff;
+    color: #333;
+    display: block;
+    padding: 12px 6px 6px;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+
+    @media (min-width: $breakpoint) {
+      margin: 6px 0 0 10px;
+    }
+
+    &:hover {
+      border-bottom: solid 3px #333;
+    }
+
+    &.current {
+      color: $primary-color;
+
+      &:hover {
+        border-bottom: solid 3px $primary-color;
+      }
+    }
+  }
+}
+
+.close-button {
+  color: #333;
+  font-size: 1rem;
+  position: fixed;
+  right: 5px;
+  top: 1px;
+  z-index: 3;
+  text-decoration: none;
+
+  @media (min-width: $breakpoint) {
+    display: none;
+  }
+}
+
+.nav-mask {
+  background-color:rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+
+  @media (min-width: $breakpoint) {
+    display: none;
+  }
+}
