@@ -11,6 +11,7 @@ describe('AwardsComponent', () => {
     {
       date: 'January 2021',
       descriptions: ['Description'],
+      id: 1,
       title: 'Title',
       type: 'Type',
     },
