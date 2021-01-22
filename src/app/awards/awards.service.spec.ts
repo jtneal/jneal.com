@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Award } from './awards';
 import { AwardsService } from './awards.service';
 
 describe('AwardsService', () => {

@@ -11,16 +11,16 @@ import { ProjectListComponent } from './project-list.component';
 describe('ProjectListComponent', () => {
   const mock: Project[] = [
     {
-      id: 1,
+      company: 'Company',
       date: 1111111111111,
+      description: 'Description',
+      id: 1,
+      image: 'Image',
+      location: 'Location',
+      skills: ['Skill'],
       title: 'Title',
       uri: 'URI',
-      location: 'Location',
       url: 'URL',
-      image: 'Image',
-      description: 'Description',
-      company: 'Company',
-      skills: ['Skill'],
     },
   ];
   let component: ProjectListComponent;
