@@ -44,7 +44,7 @@ workflows:
           requires:
             - unit-test
       - deploy-prod:
-          context: prod-jneal-ecs
+          context: prod-jneal-s3
           requires:
             - sonar-scanner
           filters:
@@ -153,6 +153,9 @@ jobs:
       - image: amazon/aws-cli
     working_directory: ~/app
     steps:
+      - run:
+          name: Install tar
+          command: yum --assumeyes install tar
       - attach-workspace-step
       - run:
           name: Deploy to prod
