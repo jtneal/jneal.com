@@ -7,7 +7,7 @@ version: 2.1
 executors:
   node-executor:
     docker:
-      - image: 'circleci/node:14-browsers'
+      - image: circleci/node:14-browsers
     working_directory: ~/app
 
 commands:
@@ -44,7 +44,7 @@ workflows:
           requires:
             - unit-test
       - deploy-prod:
-          context: 'prod-jneal-ecs'
+          context: prod-jneal-ecs
           requires:
             - sonar-scanner
           filters:
@@ -66,20 +66,20 @@ jobs:
     steps:
       - checkout
       - run:
-          name: 'Reset Main Branch'
+          name: Reset Main Branch
           command: |
             if ["$CIRCLE_BRANCH" != "main"]; then
               git branch -f main origin/main
             fi
       - restore_cache:
           keys:
-            - 'node-dependencies-{{ checksum "package-lock.json" }}'
-            - 'node-dependencies-'
+            - node-dependencies-{{ checksum "package-lock.json" }}
+            - node-dependencies-
       - run:
           environment:
             NG_CLI_ANALYTICS: ci
-          name: 'Restore packages'
-          command: 'npm install'
+          name: Restore packages
+          command: npm install
       - run:
           name: Disable Analytics
           command: npx ng analytics off
@@ -87,9 +87,9 @@ jobs:
           name: Precompile Angular libraries
           command: npx ngcc
       - save_cache:
-          key: 'node-dependencies-{{ checksum "package-lock.json" }}'
+          key: node-dependencies-{{ checksum "package-lock.json" }}
           paths:
-            - 'node_modules'
+            - node_modules
       - persist-workspace-step
 
   lint:
@@ -97,18 +97,18 @@ jobs:
     steps:
       - attach-workspace-step
       - run:
-          name: 'Lint code'
-          command: 'npm run lint'
+          name: Lint code
+          command: npm run lint
 
   unit-test:
     executor: node-executor
     steps:
       - attach-workspace-step
       - run:
-          name: 'Run unit tests'
-          command: 'npm run test:cov'
+          name: Run unit tests
+          command: npm run test:cov
       - store_test_results:
-          path: './test-results'
+          path: ./test-results
       - persist-workspace-step
 
   e2e-test:
@@ -116,24 +116,24 @@ jobs:
     steps:
       - attach-workspace-step
       - run:
-          name: 'Run e2e tests'
-          command: 'npm run e2e:ci'
+          name: Run e2e tests
+          command: npm run e2e:ci
       - store_test_results:
-          path: './test-results'
+          path: ./test-results
 
   sonar-scanner:
-    working_directory: '/usr/src'
+    working_directory: /usr/src
     docker:
-      - image: 'newtmitch/sonar-scanner:4-alpine'
+      - image: newtmitch/sonar-scanner:4-alpine
     steps:
       - attach-workspace-step
       - restore_cache:
           key: sonar-plugins
       - run:
-          name: 'Replace coverage paths'
+          name: Replace coverage paths
           command: sed -i "s+/home/circleci+/usr/src+" coverage/jneal/lcov.info
       - run:
-          name: 'Run sonar scanner'
+          name: Run sonar scanner
           command: |
             sonar-scanner \
               -Dsonar.host.url=https://sonarcloud.io \
@@ -143,23 +143,22 @@ jobs:
               -Dsonar.projectName=jneal \
               -Dsonar.projectVersion=$CIRCLE_SHA1 \
               -Dsonar.branch.name=$CIRCLE_BRANCH
-      - run:
-          save_cache:
-            paths:
-              - ~/.sonar/cache
-            key: sonar-plugins-{{ epoch }}
+      - save_cache:
+          paths:
+            - ~/.sonar/cache
+          key: sonar-plugins-{{ epoch }}
 
   deploy-prod:
     docker:
-      - image: 'amazon/aws-cli'
+      - image: amazon/aws-cli
     working_directory: ~/app
     steps:
       - attach-workspace-step
       - run:
-          name: 'Deploy to prod'
+          name: Deploy to prod
           command: aws s3 sync dist/jneal s3://jneal.com/ --delete --cache-control "no-cache"
       - run:
-          name: 'Invalidate cache'
+          name: Invalidate cache
           command: aws cloudfront create-invalidation --distribution-id EEBT46KKHGG --paths "/*"
 
   prod-e2e-test:
@@ -167,7 +166,7 @@ jobs:
     steps:
       - attach-workspace-step
       - run:
-          name: 'Run e2e tests'
-          command: 'npm run e2e:ci:prod'
+          name: Run e2e tests
+          command: npm run e2e:ci:prod
       - store_test_results:
-          path: './test-results'
+          path: ./test-results
