@@ -3,6 +3,7 @@ export interface Experience {
   dates: string;
   description: string;
   details: string[];
+  id: number;
   location: string;
   title: string;
 }

@@ -13,6 +13,7 @@ describe('ExperienceComponent', () => {
       dates: 'Dates',
       description: 'Description',
       details: ['Details'],
+      id: 1,
       location: 'Location',
       title: 'Title',
     },

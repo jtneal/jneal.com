@@ -8,6 +8,7 @@ export class SkillsService {
   private readonly skills: Skill[] = [
     {
       category: 'DevOps',
+      id: 8,
       skills: [
         'Docker',
         'AWS',
@@ -22,6 +23,7 @@ export class SkillsService {
     },
     {
       category: 'Backend',
+      id: 7,
       skills: [
         'Node',
         'TypeScript',
@@ -36,6 +38,7 @@ export class SkillsService {
     },
     {
       category: 'Frontend',
+      id: 6,
       skills: [
         'Angular',
         'RxJS',
@@ -50,6 +53,7 @@ export class SkillsService {
     },
     {
       category: 'Text Editors',
+      id: 5,
       skills: [
         'Visual Studio Code',
         'Visual Studio',
@@ -60,6 +64,7 @@ export class SkillsService {
     },
     {
       category: 'CI/CD',
+      id: 4,
       skills: [
         'CircleCI',
         'Travis CI',
@@ -68,6 +73,7 @@ export class SkillsService {
     },
     {
       category: 'CMS',
+      id: 3,
       skills: [
         'Expression Engine',
         'WordPress',
@@ -76,6 +82,7 @@ export class SkillsService {
     },
     {
       category: 'Versioning',
+      id: 2,
       skills: [
         'Git / GitHub',
         'Mercurial / Bitbucket',
@@ -83,6 +90,7 @@ export class SkillsService {
     },
     {
       category: 'Light Exp.',
+      id: 1,
       skills: [
         'Ruby on Rails',
         'Python',

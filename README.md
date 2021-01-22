@@ -1,6 +1,14 @@
-# Jneal
+# jneal.com
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.7.
+
+- Build Status 
+[![Build Status](https://circleci.com/gh/jtneal/jneal/tree/main.svg?style=svg)](https://app.circleci.com/pipelines/github/jtneal/jneal?branch=main)
+- Analysis [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jtneal_jneal&metric=alert_status)](https://sonarcloud.io/dashboard?id=jtneal_jneal)
+    [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=jtneal_jneal&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=jtneal_jneal)
+    [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=jtneal_jneal&metric=security_rating)](https://sonarcloud.io/dashboard?id=jtneal_jneal)
+    [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jtneal_jneal&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jtneal_jneal)
+    [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jtneal_jneal&metric=coverage)](https://sonarcloud.io/dashboard?id=jtneal_jneal)
 
 ## Development server
 

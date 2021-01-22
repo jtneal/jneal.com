@@ -10,6 +10,7 @@ describe('SkillsComponent', () => {
   const mock: Skill[] = [
     {
       category: 'Category',
+      id: 1,
       skills: ['Skill'],
     },
   ];
