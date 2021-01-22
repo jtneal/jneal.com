@@ -122,16 +122,17 @@ jobs:
           path: ./test-results
 
   sonar-scanner:
-    working_directory: ~/app
+    working_directory: /usr/src
     docker:
       - image: newtmitch/sonar-scanner:4-alpine
     steps:
-      - attach-workspace-step
+      - attach_workspace:
+          at: .
       - restore_cache:
           key: sonar-plugins
       - run:
           name: Replace coverage paths
-          command: sed -i "s+/home/circleci+/root+" coverage/jneal/lcov.info
+          command: sed -i "s+/home/circleci+/usr/src+" coverage/jneal/lcov.info
       - run:
           name: Run sonar scanner
           command: |
