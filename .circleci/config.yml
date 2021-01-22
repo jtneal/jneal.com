@@ -155,7 +155,7 @@ jobs:
     steps:
       - run:
           name: Install tar
-          command: yum --assumeyes install tar
+          command: yum --assumeyes install tar gzip
       - attach-workspace-step
       - run:
           name: Deploy to prod
