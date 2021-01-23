@@ -34,8 +34,8 @@ resource "aws_iam_access_key" "deploy_user_key" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_policy
 resource "aws_iam_user_policy" "deploy_user_policy" {
-  name   = "policy-${aws_iam_user.deploy_user.name}"
-  user   = aws_iam_user.deploy_user.name
+  name = "policy-${aws_iam_user.deploy_user.name}"
+  user = aws_iam_user.deploy_user.name
   policy = templatefile("../templates/cloudfront-policy.json", {
     cloudfront_arn = aws_cloudfront_distribution.jnealcom.arn
   })
@@ -69,9 +69,9 @@ resource "aws_s3_bucket_policy" "jnealcom" {
   bucket = local.bucket_name
 
   policy = templatefile("../templates/bucket-policy.json", {
-    bucket_arn = aws_s3_bucket.jnealcom.arn
+    bucket_arn               = aws_s3_bucket.jnealcom.arn
     cloudfront_principal_arn = aws_cloudfront_origin_access_identity.jnealcom.iam_arn
-    deploy_user_arn = aws_iam_user.deploy_user.arn
+    deploy_user_arn          = aws_iam_user.deploy_user.arn
   })
 }
 
@@ -88,23 +88,24 @@ resource "aws_cloudfront_origin_access_identity" "jnealcom" {
 resource "aws_cloudfront_distribution" "jnealcom" {
   origin {
     domain_name = aws_s3_bucket.jnealcom.bucket_regional_domain_name
-    origin_id = local.bucket_name
+    origin_id   = local.bucket_name
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.jnealcom.cloudfront_access_identity_path
     }
   }
 
-  enabled = true
-  is_ipv6_enabled = false
-  comment = "Serve S3 bucket ${local.bucket_name} via CloudFront."
+  aliases             = [local.bucket_name, "www.${local.bucket_name}", "jneal.net", "www.jneal.net", "jneal.org", "www.jneal.org"]
+  enabled             = true
+  is_ipv6_enabled     = false
+  comment             = "Serve S3 bucket ${local.bucket_name} via CloudFront."
   default_root_object = "index.html"
   wait_for_deployment = true
-  price_class = "PriceClass_100"
+  price_class         = "PriceClass_100"
 
   default_cache_behavior {
-    allowed_methods = ["GET", "HEAD", "OPTIONS"]
-    cached_methods = ["GET", "HEAD"]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.bucket_name
 
     forwarded_values {
@@ -121,22 +122,22 @@ resource "aws_cloudfront_distribution" "jnealcom" {
       }
     }
 
-    min_ttl     = 0
-    default_ttl = 30
-    max_ttl     = 60
-    compress    = true
+    min_ttl                = 0
+    default_ttl            = 30
+    max_ttl                = 60
+    compress               = true
     viewer_protocol_policy = "redirect-to-https"
   }
 
   custom_error_response {
-    error_code = 404
-    response_code = 200
+    error_code         = 404
+    response_code      = 200
     response_page_path = "/index.html"
   }
 
   custom_error_response {
-    error_code = 500
-    response_code = 500
+    error_code         = 500
+    response_code      = 500
     response_page_path = "/error.html"
   }
 
@@ -147,9 +148,9 @@ resource "aws_cloudfront_distribution" "jnealcom" {
   }
 
   viewer_certificate {
-    minimum_protocol_version = "TLSv1.2_2018"
-    ssl_support_method = "sni-only"
-    acm_certificate_arn = data.aws_acm_certificate.jnealcom.arn
+    minimum_protocol_version       = "TLSv1.2_2018"
+    ssl_support_method             = "sni-only"
+    acm_certificate_arn            = data.aws_acm_certificate.jnealcom.arn
     cloudfront_default_certificate = false
   }
 }
@@ -163,15 +164,90 @@ data "aws_route53_zone" "jnealcom" {
   name = "jneal.com."
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record
-# resource "aws_route53_record" "jnealcom_apex" {
-#   zone_id = data.aws_route53_zone.jnealcom.zone_id
-#   name    = local.bucket_name
-#   type    = "A"
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone
+data "aws_route53_zone" "jnealnet" {
+  name = "jneal.net."
+}
 
-#   alias {
-#     name                   = aws_cloudfront_distribution.jnealcom.domain_name
-#     zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
-#     evaluate_target_health = true
-#   }
-# }
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone
+data "aws_route53_zone" "jnealorg" {
+  name = "jneal.org."
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record
+resource "aws_route53_record" "jnealcom_apex" {
+  zone_id = data.aws_route53_zone.jnealcom.zone_id
+  name    = local.bucket_name
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.jnealcom.domain_name
+    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record
+resource "aws_route53_record" "jnealcom_www" {
+  zone_id = data.aws_route53_zone.jnealcom.zone_id
+  name    = "www.${local.bucket_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.jnealcom.domain_name
+    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record
+resource "aws_route53_record" "jnealnet_apex" {
+  zone_id = data.aws_route53_zone.jnealnet.zone_id
+  name    = "jneal.net"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.jnealcom.domain_name
+    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record
+resource "aws_route53_record" "jnealnet_www" {
+  zone_id = data.aws_route53_zone.jnealnet.zone_id
+  name    = "www.jneal.net"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.jnealcom.domain_name
+    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record
+resource "aws_route53_record" "jnealorg_apex" {
+  zone_id = data.aws_route53_zone.jnealorg.zone_id
+  name    = "jneal.org"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.jnealcom.domain_name
+    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record
+resource "aws_route53_record" "jnealorg_www" {
+  zone_id = data.aws_route53_zone.jnealorg.zone_id
+  name    = "www.jneal.org"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.jnealcom.domain_name
+    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
