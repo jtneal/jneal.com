@@ -199,7 +199,7 @@ jobs:
           command: 'sudo pip install awscli'
       - run:
           name: 'Create Task Definition'
-          command: 'aws ecs describe-task-definition --task-definition prod-jneal | jq ".taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities) | .containerDefinitions[0].image = env.DOCKER_IMAGE" > task-definition.json'
+          command: 'aws ecs describe-task-definition --task-definition prod-jneal | jq ".taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = env.DOCKER_IMAGE" > task-definition.json'
       - run:
           name: 'Deploy Task'
           command: 'aws ecs register-task-definition --cli-input-json file://task-definition.json'
