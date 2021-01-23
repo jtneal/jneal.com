@@ -546,7 +546,7 @@ resource "aws_iam_user_policy" "ecs_user_policy" {
   name   = "policy-${aws_iam_user.ecs_user.name}"
   user   = aws_iam_user.ecs_user.name
   policy = templatefile("../templates/ecs_user_policy.json", {
-    ecs_arn = replace(aws_ecs_service.fargate.id, aws_ecs_service.fargate.name, format("%s/%s", aws_ecs_cluster.prod.name, aws_ecs_service.fargate.name))
+    ecs_arn = aws_ecs_service.fargate.id
     task_arn = aws_iam_role.ecs_task.arn
   })
 }
