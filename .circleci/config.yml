@@ -89,9 +89,6 @@ jobs:
       - run:
           name: Disable Analytics
           command: npx ng analytics off
-      - run:
-          name: Precompile Angular libraries
-          command: npx ngcc
       - save_cache:
           key: node-dependencies-{{ checksum "package-lock.json" }}
           paths:
@@ -159,7 +156,7 @@ jobs:
 
   build-app:
     docker:
-      - image: 'circleci/python:3.7'
+      - image: 'circleci/python:3.9'
     working_directory: ~/app
     steps:
       - attach-workspace-step
