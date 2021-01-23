@@ -115,7 +115,10 @@ jobs:
           command: npm run test:cov
       - store_test_results:
           path: ./test-results
-      - persist-workspace-step
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - app/coverage
 
   e2e-test:
     executor: node-executor
@@ -147,7 +150,8 @@ jobs:
               -Dsonar.organization=jtneal \
               -Dsonar.projectKey=jtneal_jneal \
               -Dsonar.projectName=jneal \
-              -Dsonar.projectVersion=$CIRCLE_SHA1
+              -Dsonar.projectVersion=$CIRCLE_SHA1 \
+              -Dsonar.branch.name=$CIRCLE_BRANCH
       - save_cache:
           paths:
             - ~/.sonar/cache
@@ -160,7 +164,10 @@ jobs:
       - run:
           name: Build
           command: npm run build -- --prod
-      - persist-workspace-step
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - app/dist
 
   deploy-prod:
     docker:
