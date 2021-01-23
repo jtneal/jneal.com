@@ -30,27 +30,33 @@ workflows:
   version: 2.1
   pipeline:
     jobs:
-      - build
+      - install
       - lint:
           requires:
-            - build
+            - install
       - unit-test:
           requires:
-            - build
+            - install
       - e2e-test:
           requires:
-            - build
+            - install
       - sonar-scanner:
           requires:
             - unit-test
+      - build-app:
+          requires:
+            - install
+          filters:
+            branches:
+              only: main
       - deploy-prod:
           context: prod-jneal-s3
           requires:
+            - lint
+            - unit-test
+            - e2e-test
             - sonar-scanner
-          filters:
-            branches:
-              only:
-                - main
+            - build-app
       - prod-e2e-test:
           requires:
             - deploy-prod
@@ -61,7 +67,7 @@ workflows:
 
 jobs:
 
-  build:
+  install:
     executor: node-executor
     steps:
       - checkout
@@ -141,12 +147,20 @@ jobs:
               -Dsonar.organization=jtneal \
               -Dsonar.projectKey=jtneal_jneal \
               -Dsonar.projectName=jneal \
-              -Dsonar.projectVersion=$CIRCLE_SHA1 \
-              -Dsonar.branch.name=$CIRCLE_BRANCH
+              -Dsonar.projectVersion=$CIRCLE_SHA1
       - save_cache:
           paths:
             - ~/.sonar/cache
           key: sonar-plugins-{{ epoch }}
+
+  build-app:
+    executor: node-executor
+    steps:
+      - attach-workspace-step
+      - run:
+          name: Build
+          command: npm run build -- --prod
+      - persist-workspace-step
 
   deploy-prod:
     docker:
