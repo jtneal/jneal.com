@@ -37,7 +37,7 @@ resource "aws_iam_user_policy" "deploy_user_policy" {
   name   = "policy-${aws_iam_user.deploy_user.name}"
   user   = aws_iam_user.deploy_user.name
   policy = templatefile("../templates/cloudfront-policy.json", {
-    cloudfront_arn = aws_cloudfront_origin_access_identity.jnealcom.iam_arn
+    cloudfront_arn = aws_cloudfront_distribution.jnealcom.arn
   })
 }
 
