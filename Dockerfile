@@ -8,6 +8,8 @@ COPY ./.browserslistrc ./.browserslistrc
 COPY ./angular.json ./angular.json
 COPY ./tsconfig.app.json ./tsconfig.app.json
 COPY ./tsconfig.json ./tsconfig.json
+RUN pwd
+RUN whoami
 RUN ls -al
 RUN npm run build -- --prod
 
