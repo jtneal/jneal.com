@@ -148,8 +148,8 @@ jobs:
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN \
               -Dsonar.organization=jtneal \
-              -Dsonar.projectKey=jtneal_jneal \
-              -Dsonar.projectName=jneal \
+              -Dsonar.projectKey=jtneal_jneal.com \
+              -Dsonar.projectName=jneal.com \
               -Dsonar.projectVersion=$CIRCLE_SHA1 \
               -Dsonar.branch.name=$CIRCLE_BRANCH
       - save_cache:
