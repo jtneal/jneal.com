@@ -64,6 +64,56 @@ resource "aws_s3_bucket" "jnealcom" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+resource "aws_s3_bucket" "wwwjnealcom" {
+  bucket = "www.${local.bucket_name}"
+  acl    = "private"
+
+  website {
+    redirect_all_requests_to = "https://${local.bucket_name}"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+resource "aws_s3_bucket" "jnealnet" {
+  bucket = "jneal.net"
+  acl    = "private"
+
+  website {
+    redirect_all_requests_to = "https://${local.bucket_name}"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+resource "aws_s3_bucket" "wwwjnealnet" {
+  bucket = "www.jneal.net"
+  acl    = "private"
+
+  website {
+    redirect_all_requests_to = "https://${local.bucket_name}"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+resource "aws_s3_bucket" "jnealorg" {
+  bucket = "jneal.org"
+  acl    = "private"
+
+  website {
+    redirect_all_requests_to = "https://${local.bucket_name}"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+resource "aws_s3_bucket" "wwwjnealorg" {
+  bucket = "www.jneal.org"
+  acl    = "private"
+
+  website {
+    redirect_all_requests_to = "https://${local.bucket_name}"
+  }
+}
+
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy
 resource "aws_s3_bucket_policy" "jnealcom" {
   bucket = local.bucket_name
@@ -95,7 +145,7 @@ resource "aws_cloudfront_distribution" "jnealcom" {
     }
   }
 
-  aliases             = [local.bucket_name, "www.${local.bucket_name}", "jneal.net", "www.jneal.net", "jneal.org", "www.jneal.org"]
+  aliases             = [local.bucket_name]
   enabled             = true
   is_ipv6_enabled     = false
   comment             = "Serve S3 bucket ${local.bucket_name} via CloudFront."
@@ -194,8 +244,8 @@ resource "aws_route53_record" "jnealcom_www" {
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.jnealcom.domain_name
-    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    name                   = aws_s3_bucket.wwwjnealcom.website_domain
+    zone_id                = aws_s3_bucket.wwwjnealcom.hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -207,8 +257,8 @@ resource "aws_route53_record" "jnealnet_apex" {
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.jnealcom.domain_name
-    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    name                   = aws_s3_bucket.jnealnet.website_domain
+    zone_id                = aws_s3_bucket.jnealnet.hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -220,8 +270,8 @@ resource "aws_route53_record" "jnealnet_www" {
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.jnealcom.domain_name
-    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    name                   = aws_s3_bucket.wwwjnealnet.website_domain
+    zone_id                = aws_s3_bucket.wwwjnealnet.hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -233,8 +283,8 @@ resource "aws_route53_record" "jnealorg_apex" {
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.jnealcom.domain_name
-    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    name                   = aws_s3_bucket.jnealorg.website_domain
+    zone_id                = aws_s3_bucket.jnealorg.hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -246,8 +296,8 @@ resource "aws_route53_record" "jnealorg_www" {
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.jnealcom.domain_name
-    zone_id                = aws_cloudfront_distribution.jnealcom.hosted_zone_id
+    name                   = aws_s3_bucket.wwwjnealorg.website_domain
+    zone_id                = aws_s3_bucket.wwwjnealorg.hosted_zone_id
     evaluate_target_health = false
   }
 }

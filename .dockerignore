@@ -1,0 +1,14 @@
+.circleci
+.git
+coverage
+dist
+e2e
+iac
+node_modules
+test-results
+.editorconfig
+.gitignore
+karma.conf.js
+README.md
+sonar-project.properties
+npm-debug.log
