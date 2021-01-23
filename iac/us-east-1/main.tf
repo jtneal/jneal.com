@@ -32,6 +32,15 @@ resource "aws_iam_access_key" "deploy_user_key" {
   user = aws_iam_user.deploy_user.name
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_policy
+resource "aws_iam_user_policy" "deploy_user_policy" {
+  name   = "policy-${aws_iam_user.deploy_user.name}"
+  user   = aws_iam_user.deploy_user.name
+  policy = templatefile("../templates/cloudfront-policy.json", {
+    cloudfront_arn = aws_cloudfront_origin_access_identity.jnealcom.iam_arn
+  })
+}
+
 ############################################################
 # S3
 ############################################################
