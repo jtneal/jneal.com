@@ -183,7 +183,7 @@ jobs:
           command: aws s3 sync dist/jneal s3://jneal.com/ --delete --cache-control "no-cache"
       - run:
           name: Invalidate cache
-          command: aws cloudfront create-invalidation --distribution-id EEBT46KKHGG --paths "/*"
+          command: aws cloudfront create-invalidation --distribution-id E2WHP3D415NRXQ --paths "/*"
 
   prod-e2e-test:
     executor: node-executor
