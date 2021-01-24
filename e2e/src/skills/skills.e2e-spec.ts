@@ -15,7 +15,7 @@ describe('Skills', () => {
 
   it('should display multiple cards', async () => {
     await page.navigateTo();
-    expect(await page.getCardCount()).toBeGreaterThanOrEqual(8);
+    expect(await page.getCardCount()).toBeGreaterThanOrEqual(12);
   });
 
   afterEach(noBrowserErrorsAssertion);

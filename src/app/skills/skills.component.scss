@@ -1,0 +1,11 @@
+@import '../../vars.scss';
+
+h2 {
+  @media (min-width: 880px) {
+    font-size: 1.6rem;
+  }
+
+  @media (min-width: 935px) {
+    font-size: 1.75rem;
+  }
+}
