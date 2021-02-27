@@ -29,15 +29,30 @@ header {
 
 .social {
   flex: 0 1 auto;
-  height: 30px;
+  height: 24px;
   overflow: hidden;
-  padding: 9px 0 9px 6px;
+  padding: 12px 0 12px 6px;
+
+  @media (min-width: 368px) {
+    height: 30px;
+    padding: 9px 0 9px 6px;
+  }
 
   img {
     display: inline-block;
     margin-right: 5px;
+    width: 24px;
+
+    @media (min-width: 368px) {
+      margin-right: 16px;
+      width: 30px;
+    }
 
     @media (min-width: $breakpoint) {
+      margin-right: 5px;
+    }
+
+    @media (min-width: 900px) {
       margin-right: 16px;
     }
   }

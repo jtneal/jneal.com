@@ -212,6 +212,9 @@ jobs:
     steps:
       - attach-workspace-step
       - run:
+          name: Wait for task deployment
+          command: sleep 180
+      - run:
           name: Run e2e tests
           command: npm run e2e:ci:prod
       - store_test_results:
