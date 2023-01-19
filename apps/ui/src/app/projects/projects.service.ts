@@ -1,8 +1,7 @@
-// tslint:disable:object-literal-sort-keys
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ProjectDto } from '@jneal.com/shared/dtos';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';

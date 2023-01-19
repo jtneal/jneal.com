@@ -155,7 +155,7 @@ jobs:
             #   -Dsonar.projectVersion=$CIRCLE_SHA1 \
             #   -Dsonar.branch.name=$CIRCLE_BRANCH \
             #   -Dsonar.sources=apps/bff/src/app \
-            #   -Dsonar.exclusions=**/*.module.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
+            #   -Dsonar.exclusions=**/*.module.ts,**/*.routes.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
             #   -Dsonar.tests=apps/bff/src/app \
             #   -Dsonar.test.inclusions=**/*.spec.ts \
             #   -Dsonar.typescript.lcov.reportPaths=coverage/apps/bff/lcov.info \
@@ -169,7 +169,7 @@ jobs:
               -Dsonar.projectVersion=$CIRCLE_SHA1 \
               -Dsonar.branch.name=$CIRCLE_BRANCH \
               -Dsonar.sources=apps/ui/src/app \
-              -Dsonar.exclusions=**/*.module.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
+              -Dsonar.exclusions=**/*.module.ts,**/*.routes.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
               -Dsonar.tests=apps/ui/src/app \
               -Dsonar.test.inclusions=**/*.spec.ts \
               -Dsonar.typescript.lcov.reportPaths=coverage/apps/ui/lcov.info \
