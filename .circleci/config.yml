@@ -81,9 +81,6 @@ jobs:
           name: Restore packages
           command: npm install
       - run:
-          name: Disable Analytics
-          command: npx ng analytics off
-      - run:
           name: Precompile Angular libraries
           command: npx ngcc
       - save_cache:
