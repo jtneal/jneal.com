@@ -87,6 +87,7 @@ jobs:
           key: node-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
+            - .cache
       - persist-workspace-step
 
   lint:
@@ -115,6 +116,10 @@ jobs:
     executor: node-executor
     steps:
       - attach-workspace-step
+      - run:
+          name: Run BFF
+          command: npx nx serve bff
+          background: true
       - run:
           name: Run e2e tests
           command: npx nx run-many --target=e2e
@@ -154,7 +159,7 @@ jobs:
 
   build-app:
     docker:
-      - image: 'circleci/python:3.9'
+      - image: 'cimg/python:3.11'
     working_directory: ~/app
     steps:
       - attach-workspace-step
@@ -180,7 +185,7 @@ jobs:
 
   deploy-prod:
     docker:
-      - image: 'circleci/python:3.9'
+      - image: 'cimg/python:3.11'
     working_directory: ~/app
     steps:
       - run:
