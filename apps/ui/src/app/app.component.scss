@@ -1,0 +1,6 @@
+@import '../vars.scss';
+
+main {
+  // 68px header + 241px footer + 32px padding
+  min-height: calc(100vh - 341px);
+}

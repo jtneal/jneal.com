@@ -7,7 +7,7 @@ version: 2.1
 executors:
   node-executor:
     docker:
-      - image: circleci/node:14-browsers
+      - image: circleci/node:18-browsers
     working_directory: ~/app
 
 commands:
@@ -71,12 +71,6 @@ jobs:
     executor: node-executor
     steps:
       - checkout
-      - run:
-          name: Reset Main Branch
-          command: |
-            if ["$CIRCLE_BRANCH" != "main"]; then
-              git branch -f main origin/main
-            fi
       - restore_cache:
           keys:
             - node-dependencies-{{ checksum "package-lock.json" }}
@@ -104,7 +98,7 @@ jobs:
       - attach-workspace-step
       - run:
           name: Lint code
-          command: npm run lint
+          command: npx nx run-many --target=lint
 
   unit-test:
     executor: node-executor
@@ -112,7 +106,7 @@ jobs:
       - attach-workspace-step
       - run:
           name: Run unit tests
-          command: npm run test:cov
+          command: npx nx run-many --target=test
       - store_test_results:
           path: ./test-results
       - persist_to_workspace:
@@ -126,7 +120,7 @@ jobs:
       - attach-workspace-step
       - run:
           name: Run e2e tests
-          command: npm run e2e:ci
+          command: npx nx run-many --target=e2e
       - store_test_results:
           path: ./test-results
 
@@ -140,7 +134,11 @@ jobs:
           key: sonar-plugins
       - run:
           name: Replace coverage paths
-          command: sed -i "s+/home/circleci+/tmp+" coverage/jneal/lcov.info
+          command: |
+            sed -i "s+/home/circleci+/tmp+" coverage/apps/bff/lcov.info
+            sed -i "s+/home/circleci+/tmp+" coverage/apps/ui/lcov.info
+            sed -i "s+/home/circleci+/tmp+" coverage/libs/shared/dtos/lcov.info
+            sed -i "s+/home/circleci+/tmp+" coverage/libs/ui/components/lcov.info
       - run:
           name: Run sonar scanner
           command: |

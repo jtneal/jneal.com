@@ -1,0 +1,12 @@
+<section>
+  <h1>Skills</h1>
+  <div class="cards">
+    <div *ngFor="let group of skills$ | async" class="card-column">
+      <jneal-com-card [title]="group.category">
+        <ul>
+          <li *ngFor="let skill of group.skills">{{ skill }}</li>
+        </ul>
+      </jneal-com-card>
+    </div>
+  </div>
+</section>

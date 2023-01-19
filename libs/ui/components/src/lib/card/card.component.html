@@ -1,0 +1,13 @@
+<div class="card" [class.card-teaser]="isTeaser">
+  <span class="card-image">
+    <ng-content select="[card-image]"></ng-content>
+  </span>
+  <div *ngIf="title" class="card-header">
+    <h2>{{ title }}</h2>
+  </div>
+  <ng-content></ng-content>
+  <div *ngIf="subTitle" class="card-subtitle" [class.card-teaser-content]="isTeaser">
+    <h4>{{ subTitle }}</h4>
+    {{ subText }}
+  </div>
+</div>
