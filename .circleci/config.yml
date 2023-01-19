@@ -150,10 +150,30 @@ jobs:
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN \
               -Dsonar.organization=jtneal \
-              -Dsonar.projectKey=jtneal_jneal.com \
-              -Dsonar.projectName=jneal.com \
+              -Dsonar.projectKey=jtneal_jneal.com_bff \
+              -Dsonar.projectName=jneal.com_bff \
               -Dsonar.projectVersion=$CIRCLE_SHA1 \
-              -Dsonar.branch.name=$CIRCLE_BRANCH
+              -Dsonar.branch.name=$CIRCLE_BRANCH \
+              -Dsonar.sources=apps/bff/src/app \
+              -Dsonar.exclusions=**/*.module.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
+              -Dsonar.tests=apps/bff/src/app \
+              -Dsonar.test.inclusions=**/*.spec.ts \
+              -Dsonar.typescript.lcov.reportPaths=coverage/apps/bff/lcov.info \
+              -Dsonar.sourceEncoding=UTF-8
+            sonar-scanner \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=$SONAR_TOKEN \
+              -Dsonar.organization=jtneal \
+              -Dsonar.projectKey=jtneal_jneal.com_ui \
+              -Dsonar.projectName=jneal.com_ui \
+              -Dsonar.projectVersion=$CIRCLE_SHA1 \
+              -Dsonar.branch.name=$CIRCLE_BRANCH \
+              -Dsonar.sources=apps/ui/src/app \
+              -Dsonar.exclusions=**/*.module.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
+              -Dsonar.tests=apps/ui/src/app \
+              -Dsonar.test.inclusions=**/*.spec.ts \
+              -Dsonar.typescript.lcov.reportPaths=coverage/apps/ui/lcov.info \
+              -Dsonar.sourceEncoding=UTF-8
       - save_cache:
           paths:
             - ~/.sonar/cache
