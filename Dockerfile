@@ -19,4 +19,5 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/dist/apps/bff ./dist
 COPY --from=builder /usr/src/app/node_modules ./dist/node_modules
+ENV PORT=80
 CMD ["node", "dist/main"]
