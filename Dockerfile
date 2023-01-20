@@ -12,10 +12,11 @@ RUN npx nx run bff:build:production
 RUN npx nx run ui:build:production
 RUN rm -rf ./dist/apps/bff/public
 RUN mv ./dist/apps/ui ./dist/apps/bff/public
+RUN npm prune --production
 
 # Final image
 FROM node:18-alpine
 WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app/dist/apps/bff ./
-COPY --from=builder /usr/src/app/node_modules ./
-CMD ["node", "main.js"]
+COPY --from=builder /usr/src/app/dist/apps/bff ./dist
+COPY --from=builder /usr/src/app/node_modules ./dist/node_modules
+CMD ["node", "main"]
