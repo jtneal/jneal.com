@@ -1,0 +1,8 @@
+<section>
+  <h1>Awards</h1>
+  <jneal-com-card *ngFor="let award of awards$ | async" [subText]="award.date" [subTitle]="award.title" [title]="award.type">
+    <ul>
+      <li *ngFor="let description of award.descriptions">{{ description }}</li>
+    </ul>
+  </jneal-com-card>
+</section>

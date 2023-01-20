@@ -1,0 +1,10 @@
+<section>
+  <h1>Projects</h1>
+  <div class="cards">
+    <div *ngFor="let project of projects$ | async" class="card-column">
+      <jneal-com-card (click)="viewProject(project)" [isTeaser]="true" subText="{{ project.date | date: 'LLLL yyyy' }} &bull; {{ project.location }}" [subTitle]="project.title">
+        <a [routerLink]="['/projects', project.uri]"><img [alt]="project.title" src="/assets/images/projects/{{ project.image }}"></a>
+      </jneal-com-card>
+    </div>
+  </div>
+</section>

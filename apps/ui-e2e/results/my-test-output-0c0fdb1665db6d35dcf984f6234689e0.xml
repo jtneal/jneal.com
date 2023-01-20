@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="2.485" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2023-01-19T03:57:02" tests="0" file="src/e2e/experience.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Experience" timestamp="2023-01-19T03:57:02" tests="2" time="2.464" failures="0">
+    <testcase name="Experience should display title" time="1.234" classname="should display title">
+    </testcase>
+    <testcase name="Experience should display multiple cards" time="1.215" classname="should display multiple cards">
+    </testcase>
+  </testsuite>
+</testsuites>

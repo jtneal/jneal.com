@@ -7,7 +7,7 @@ version: 2.1
 executors:
   node-executor:
     docker:
-      - image: circleci/node:14-browsers
+      - image: cimg/node:lts-browsers
     working_directory: ~/app
 
 commands:
@@ -71,31 +71,23 @@ jobs:
     executor: node-executor
     steps:
       - checkout
-      - run:
-          name: Reset Main Branch
-          command: |
-            if ["$CIRCLE_BRANCH" != "main"]; then
-              git branch -f main origin/main
-            fi
       - restore_cache:
           keys:
-            - node-dependencies-{{ checksum "package-lock.json" }}
-            - node-dependencies-
+            - node-dependencies-v2-{{ checksum "package-lock.json" }}
+            - node-dependencies-v2-
       - run:
           environment:
             NG_CLI_ANALYTICS: ci
           name: Restore packages
-          command: npm install
-      - run:
-          name: Disable Analytics
-          command: npx ng analytics off
+          command: npm ci
       - run:
           name: Precompile Angular libraries
           command: npx ngcc
       - save_cache:
-          key: node-dependencies-{{ checksum "package-lock.json" }}
+          key: node-dependencies-v2-{{ checksum "package-lock.json" }}
           paths:
-            - node_modules
+            - ~/.cache
+            - ~/.npm
       - persist-workspace-step
 
   lint:
@@ -104,7 +96,7 @@ jobs:
       - attach-workspace-step
       - run:
           name: Lint code
-          command: npm run lint
+          command: npx nx run-many --target=lint
 
   unit-test:
     executor: node-executor
@@ -112,7 +104,7 @@ jobs:
       - attach-workspace-step
       - run:
           name: Run unit tests
-          command: npm run test:cov
+          command: npx nx run-many --target=test --projects=bff,ui
       - store_test_results:
           path: ./test-results
       - persist_to_workspace:
@@ -124,9 +116,17 @@ jobs:
     executor: node-executor
     steps:
       - attach-workspace-step
+      - restore_cache:
+          keys:
+            - node-dependencies-v2-{{ checksum "package-lock.json" }}
+            - node-dependencies-v2-
+      - run:
+          name: Run BFF
+          command: npx nx serve bff
+          background: true
       - run:
           name: Run e2e tests
-          command: npm run e2e:ci
+          command: npx nx run-many --target=e2e
       - store_test_results:
           path: ./test-results
 
@@ -140,10 +140,26 @@ jobs:
           key: sonar-plugins
       - run:
           name: Replace coverage paths
-          command: sed -i "s+/home/circleci+/tmp+" coverage/jneal/lcov.info
+          command: |
+            sed -i "s+/home/circleci+/tmp+" coverage/apps/bff/lcov.info
+            sed -i "s+/home/circleci+/tmp+" coverage/apps/ui/lcov.info
       - run:
           name: Run sonar scanner
           command: |
+            # sonar-scanner \
+            #   -Dsonar.host.url=https://sonarcloud.io \
+            #   -Dsonar.login=$SONAR_TOKEN \
+            #   -Dsonar.organization=jtneal \
+            #   -Dsonar.projectKey=jtneal_jneal.com_bff \
+            #   -Dsonar.projectName=jneal.com_bff \
+            #   -Dsonar.projectVersion=$CIRCLE_SHA1 \
+            #   -Dsonar.branch.name=$CIRCLE_BRANCH \
+            #   -Dsonar.sources=apps/bff/src/app \
+            #   -Dsonar.exclusions=**/*.module.ts,**/*.routes.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
+            #   -Dsonar.tests=apps/bff/src/app \
+            #   -Dsonar.test.inclusions=**/*.spec.ts \
+            #   -Dsonar.typescript.lcov.reportPaths=coverage/apps/bff/lcov.info \
+            #   -Dsonar.sourceEncoding=UTF-8
             sonar-scanner \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN \
@@ -151,7 +167,13 @@ jobs:
               -Dsonar.projectKey=jtneal_jneal.com \
               -Dsonar.projectName=jneal.com \
               -Dsonar.projectVersion=$CIRCLE_SHA1 \
-              -Dsonar.branch.name=$CIRCLE_BRANCH
+              -Dsonar.branch.name=$CIRCLE_BRANCH \
+              -Dsonar.sources=apps/ui/src/app \
+              -Dsonar.exclusions=**/*.module.ts,**/*.routes.ts,**/node_modules/**,**/*.spec.ts,**/*.mock.ts \
+              -Dsonar.tests=apps/ui/src/app \
+              -Dsonar.test.inclusions=**/*.spec.ts \
+              -Dsonar.typescript.lcov.reportPaths=coverage/apps/ui/lcov.info \
+              -Dsonar.sourceEncoding=UTF-8
       - save_cache:
           paths:
             - ~/.sonar/cache
@@ -159,12 +181,12 @@ jobs:
 
   build-app:
     docker:
-      - image: 'circleci/python:3.9'
+      - image: 'cimg/python:3.11'
     working_directory: ~/app
     steps:
       - attach-workspace-step
       - setup_remote_docker:
-          version: 19.03.13
+          version: 20.10.11
       - run:
           name: 'Set Image Tag'
           command: |
@@ -185,7 +207,7 @@ jobs:
 
   deploy-prod:
     docker:
-      - image: 'circleci/python:3.9'
+      - image: 'cimg/python:3.11'
     working_directory: ~/app
     steps:
       - run:

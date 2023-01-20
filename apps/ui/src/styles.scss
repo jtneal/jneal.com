@@ -1,0 +1,70 @@
+@import './vars.scss';
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-image: url('/assets/images/background-grid.png');
+  color: #333;
+  font-family: Merriweather, serif;
+  padding-top: 68px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0 0 16px 0;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+p {
+  font-size: 1rem;
+  letter-spacing: .01rem;
+  line-height: 1.75rem;
+  margin: 0 0 1rem 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  letter-spacing: .01rem;
+  line-height: 1.75rem;
+}
+
+img {
+  display: block;
+}
+
+.centered-column {
+  max-width: 89rem;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+main a,
+footer a {
+  color: $primary-color;
+  text-decoration: none;
+
+  &:hover {
+    color: $highlight-color;
+  }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="1.215" tests="1" failures="0">
+  <testsuite name="Root Suite" timestamp="2023-01-19T03:57:12" tests="0" file="src/e2e/projects-item.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Projects Item" timestamp="2023-01-19T03:57:12" tests="1" time="1.201" failures="0">
+    <testcase name="Projects Item should display title" time="1.196" classname="should display title">
+    </testcase>
+  </testsuite>
+</testsuites>
