@@ -19,4 +19,4 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/dist/apps/bff ./dist
 COPY --from=builder /usr/src/app/node_modules ./dist/node_modules
-CMD ["node", "main"]
+CMD ["node", "dist/main"]
