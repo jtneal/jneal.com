@@ -1,17 +1,20 @@
 # Build image
-FROM node:14 as builder
+FROM node:18 as builder
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --silent
-COPY ./src ./src
-COPY ./.browserslistrc ./.browserslistrc
-COPY ./angular.json ./angular.json
-COPY ./tsconfig.app.json ./tsconfig.app.json
-COPY ./tsconfig.json ./tsconfig.json
-RUN npm run build -- --prod
+COPY ./apps/bff ./apps/bff
+COPY ./apps/ui ./apps/ui
+COPY ./libs ./libs
+COPY ./nx.json ./nx.json
+COPY ./tsconfig.base.json ./tsconfig.base.json
+RUN npx nx run bff:build:production
+RUN npx nx run ui:build:production
+RUN rm -rf ./dist/apps/bff/public
+RUN mv ./dist/apps/ui ./dist/apps/bff/public
 
 # Final image
-FROM nginx:stable-alpine
+FROM node:18-alpine
 WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app/dist ./
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /usr/src/app/dist/apps/bff ./
+CMD ['node', 'main.js']
