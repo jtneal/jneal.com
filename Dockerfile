@@ -17,4 +17,5 @@ RUN mv ./dist/apps/ui ./dist/apps/bff/public
 FROM node:18-alpine
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/dist/apps/bff ./
-CMD ['node', 'main.js']
+COPY --from=builder /usr/src/app/node_modules ./
+CMD ["node", "main.js"]
