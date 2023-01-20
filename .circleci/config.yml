@@ -199,7 +199,7 @@ jobs:
       - run:
           name: 'Install AWS CLI & Authenticate'
           command: |
-            sudo pip install awscli
+            pip install awscli
             aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 703263122238.dkr.ecr.us-east-2.amazonaws.com
       - run:
           name: 'Push Docker Image'
@@ -218,7 +218,7 @@ jobs:
             echo "export DOCKER_IMAGE=$docker_image" >> $BASH_ENV
       - run:
           name: 'Install AWS CLI'
-          command: 'sudo pip install awscli'
+          command: 'pip install awscli'
       - run:
           name: 'Create Task Definition'
           command: 'aws ecs describe-task-definition --task-definition prod-jneal | jq ".taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = env.DOCKER_IMAGE" > task-definition.json'
