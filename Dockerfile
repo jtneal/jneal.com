@@ -1,5 +1,5 @@
 # Build image
-FROM node:18 as builder
+FROM node:20 as builder
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --silent
@@ -15,7 +15,7 @@ RUN mv ./dist/apps/ui ./dist/apps/bff/public
 RUN npm prune --production
 
 # Final image
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/dist/apps/bff ./dist
 COPY --from=builder /usr/src/app/node_modules ./dist/node_modules
