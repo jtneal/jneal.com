@@ -104,7 +104,7 @@ jobs:
       - attach-workspace-step
       - run:
           name: Run unit tests
-          command: npx nx run-many --target=test --projects=bff,ui
+          command: npx nx run-many --target=test --projects=bff,ui --code-coverage
       - store_test_results:
           path: ./test-results
       - persist_to_workspace:
